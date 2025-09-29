@@ -1,7 +1,7 @@
 # lab2-2_starter.py
 
 LOGFILE = "sample_auth_small.log"  # change filename if needed
-""""
+"""
 def simple_parser(line):#This function locates the port no.
     
     looks for the substring ' port ' and returns the following port number.
@@ -37,16 +37,36 @@ def simple_ips(line):#This function locates the ips from "sample_auth_small.log"
 ## It will call any functions from above that we might need.
 if __name__ == "__main__":
 
-    uniqueIps = ()
+    uniqueIps = {}
     noOfLines = 0
-
+    all_ips=[]
+    sorted_uniquie_ips = []
     with open(LOGFILE, "r") as f:
 
         for line in f:
         
-            print (simple_ips(line.strip()))
-            noOfUniqueIps = uniqueIps(simple_ips)
+            all_ips.append(simple_ips(line.strip()))
             noOfLines = noOfLines+1
 
     print ("Lines read: "+str(noOfLines))
-    print(noOfUniqueIps)
+    uniqueIps = set(all_ips)                        #adds ips to set
+    for i in uniqueIps:
+        if i:                                       #uses an if to say if ip, then sort. Removes null entries.
+            sorted_uniquie_ips.append(i)            #removes ips from a set to a list to remove duplicates.
+
+    sorted_uniquie_ips=sorted(sorted_uniquie_ips)   #assignes removed, sorted ips to a varaible
+    print("Unique IP's: "+str(len(set(all_ips))))   #prints the length of the set of ips. Sets auto remove duplicates.
+    print ("First 10 IP's: "+str(sorted_uniquie_ips[:10]))#[:10] only prints the first 10 ips in list.
+
+    from collections import defaultdict
+
+    counts = defaultdict(int)           # Create a dictionary to keep track of IPs
+
+    with open("sample_auth_small.log") as f:
+        for line in f:
+            if "Failed password" in line or "Invalid user" in line:
+                # extract ip
+                ip = ip_parse(line)
+                if ip:
+                    counts[ip] += 1
+    print(counts)
