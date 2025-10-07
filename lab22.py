@@ -33,6 +33,16 @@ def simple_ips(line):#This function locates the ips from "sample_auth_small.log"
             return None
     return None
 
+def ip_parse(line):
+    parts = line.split()  # Split the line into parts.
+    for i, part in enumerate(parts):  # Loop through parts with index.
+        if part == "from" and i + 1 < len(parts):  # Check if part is "from" and if there is a next part.
+            return parts[i + 1].strip(",.")  # Return the part after "from", stripping punctuation.
+    return None
+
+def top_n(counts, n=5):
+    return sorted(counts.items(), key=lambda kv: kv[1], reverse=True)[:n]
+
 ## This is the main block that will run first. 
 ## It will call any functions from above that we might need.
 if __name__ == "__main__":
@@ -63,10 +73,16 @@ if __name__ == "__main__":
     counts = defaultdict(int)           # Create a dictionary to keep track of IPs
 
     with open("sample_auth_small.log") as f:
-        for line in f:
-            if "Failed password" in line or "Invalid user" in line:
+        for line in f: #for each line in the file
+            if "Failed password" in line or "Invalid user" in line: # check for failed login attempts
                 # extract ip
-                ip = ip_parse(line)
+                ip = ip_parse(line)#call the function to extract the ip
                 if ip:
-                    counts[ip] += 1
+                    counts[ip] += 1 
     print(counts)
+
+import time
+start = time.time()
+# run counting
+end = time.time()
+print("Elapsed:", end-start, "seconds")
